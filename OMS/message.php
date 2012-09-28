@@ -17,7 +17,6 @@ class OMS_Message extends OMS_Object {
         }
 
         $this->xmsHead = (object)array(
-            'scheduled' => is_null($schedule) ? gmdate('Y-m-d\TH:i:s\Z') : $schedule,
             'requiredService' => (is_a($message,'OMS_Body_MMS') ? 'M' : 'S').'MS_SENDER',
             'to'=>(object)array()
         );

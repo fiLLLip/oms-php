@@ -228,7 +228,6 @@ class OMS extends SoapClient{
 
         $this->user = $user;
         $info = $this->GetUserInfo($user);
-        $this->user->replyPhone = $info->userInfo->replyPhone;
 	}
 
     /**
@@ -255,7 +254,7 @@ class OMS extends SoapClient{
         //Probably because of UTF-16 stated in response
 
         $xml = OMS::xml2array($this->__getLastResponse()); //that's why such a terrible manual-parser
-		$xml = $xml["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["UserInfoResponse"]["UserInfoResult"]["value"];
+		$xml = $xml["soapenv:Envelope"]["soapenv:Body"]["GetUserInfoResponse"]["GetUserInfoResult"]["value"];
 
         $userInfo = OMS::xmlstr2obj($xml);
         if($userInfo->userInfo->error->_code != 'ok'){
@@ -278,13 +277,15 @@ class OMS extends SoapClient{
             $xmsData->setFrom($this->user);
         }
 
-        $response = $this->__soapCall('DeliverXms',array($xmsData->toStruct())); //could've used SendXms, but that's just an obsolete alias
-        $response = OMS::xmlstr2obj($response->DeliverXmsResult);
+        $response = $this->__soapCall('SendXms',array($xmsData->toStruct())); //could've used SendXms, but that's just an obsolete alias
+		$response = OMS::xmlstr2obj($response->DeliverXmsResult);
 
         if($response->xmsResponse->error->_code != 'ok'){
-            throw new OMS_Exception($response->xmsResponse->error);
+            //throw new OMS_Exception($response->xmsResponse->error);
+			return false;
         }
-        return $response;
+        //return $response;
+		return true;
     }
     
 }

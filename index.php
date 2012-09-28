@@ -6,26 +6,30 @@ set_error_handler("exception_error_handler"); //Library really counts on a rethr
 
 
 require_once 'oms.php';
-$myNumber = '79274445566';
-$u = new OMS_User($myNumber,'my-serviceguide-password');
+$myNumber = '12345678'; // Your 8-digit norwegian number
+$u = new OMS_User($myNumber,'my-serviceguide-password'); // Your password to "Mine sider"
+
+$recipient = '23456789'; //Recipients 8-digit number
 
 try{
     $c = new OMS($u,
-        'https://sms.megafon.ru/oms/service.asmx',
-        //'https://sms.megafon.ru/oms/service.asmx?WSDL', // A russian carrier won't send us WSDL just like that
-        //it obviously needs some browser-style headers, so we can fetch wsdl emulating it, but that's not our aim
-
-        'https://www.intellisoftware.co.uk/smsgateway/oms/oms.asmx?WSDL' //simplier to get them there
-        //'http://dl.dropbox.com/u/3477485/oms.wsdl' //or there. in case intellisoftware.co.uk is down
+        'https://telenormobil.no/smapi/services/omsv3_service'
     );
     
 }catch(OMS_Exception $e){
-    die('Login should be like 79274445566, and a service guide password as that password');
+    die('Login should be like your number, and a service guide password as that password');
 }
 
-var_dump($c->GetServiceInfo());
+var_dump($c->GetServiceInfo()); // This is not needed, but useful for debugging
 
 $m = new OMS_Message(new OMS_Body_SMS('Hi fella'),$myNumber);
-//var_dump($c->DeliverXms($m)); //so we send that. Careful with it.
+
+// Modified the DeliverXms to return true or false
+if ($c->DeliverXms($m)) {
+	echo 'true';
+}
+else {
+	echo 'false';
+}
 
 ?>
